@@ -4,7 +4,14 @@
     <input type="file" :multiple="false" @input="fileInput" />
     <div v-if="fileContent" class="compiler">
       <div class="code">
-        <pre>{{ fileContent }}</pre>
+        <div
+          class="line"
+          v-for="(line, idx) in fileContent.split('\n')"
+          :key="idx"
+        >
+          <pre class="index">{{ idx + 1 }}</pre>
+          <pre class="content">{{ line }}</pre>
+        </div>
       </div>
       <div class="controls">
         <div class="control-buttons">
@@ -65,11 +72,28 @@ export default {
 <style scoped>
 .code {
   margin: 15px 0;
-  padding: 10px 30px;
   background-color: #c7c5c5;
+
+  background-color: #e9e9e9;
 
   max-height: 300px;
   overflow: auto;
+}
+
+.line {
+  display: flex;
+  flex-direction: row;
+}
+
+.index {
+  width: 20px;
+  height: 20px;
+  background-color: #adc5a8;
+}
+
+pre {
+  margin: 0;
+  padding: 2px 5px;
 }
 
 .control-buttons {
