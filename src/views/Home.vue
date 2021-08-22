@@ -1,6 +1,5 @@
 <template>
   <div class="home">
-    <h1>Compilador SSL - IME</h1>
     <input type="file" :multiple="false" @input="fileInput" />
     <div v-if="fileContent" class="compiler">
       <code-view :code="fileContent" />
