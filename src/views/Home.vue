@@ -51,14 +51,8 @@ export default {
     },
     lexical() {
       const lexical = new Lexical(this.fileContent);
-      const errors = lexical.run();
-      if (errors.length) {
-        this.analysisLogs = errors.map(
-          (e) => `Line ${e.line}, Char ${e.char}: ${e.message}`
-        );
-      } else {
-        this.analysisLogs = ["There are no lexical errors"];
-      }
+      lexical.run();
+      this.analysisLogs = lexical.getLogs();
     },
   },
 };
