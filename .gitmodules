@@ -1,3 +1,0 @@
-[submodule "src/utils/compiler"]
-	path = src/utils/compiler
-	url = git@github.com:felipereyel/ssl-compiler-ime.git
