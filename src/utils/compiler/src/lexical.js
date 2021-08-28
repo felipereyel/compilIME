@@ -65,19 +65,20 @@ export default class Lexical {
       "type",
       "var",
       "while",
+      "return",
     ];
     const idx = key_words.findIndex((el) => el === name);
     return idx === -1 ? Tokens.ID : idx;
   }
 
-  addConst(c) {
-    this.vConsts.push(c);
+  addConst(type, value) {
+    this.vConsts.push({ type, value });
     return this.vConsts.length - 1;
   }
 
-  getConst(c) {
-    return this.vConsts[c];
-  } // unused
+  // getConst(c) {
+  //   return this.vConsts[c];
+  // }
 
   searchName(name) {
     if (!this.identifiers[name]) {
@@ -98,7 +99,6 @@ export default class Lexical {
       token = Tokens.EOF;
     } else if (isAlfa(this.nextChar)) {
       let text = "";
-      text += this.nextChar;
       while (isAlfa(this.nextChar) || this.nextChar == "_") {
         text += this.nextChar;
         this.readNextChar();
@@ -115,7 +115,7 @@ export default class Lexical {
         this.readNextChar();
       }
       token = Tokens.NUMERAL;
-      secondaryToken = this.addConst(num);
+      secondaryToken = this.addConst("int", num);
     } else if (this.nextChar == '"') {
       let string = "";
       string += this.nextChar;
@@ -129,13 +129,13 @@ export default class Lexical {
       string += this.nextChar;
       this.readNextChar();
       token = Tokens.STRING;
-      secondaryToken = this.addConst(string);
+      secondaryToken = this.addConst("string", string);
     } else {
       if (this.nextChar == "'") {
         this.readNextChar();
         token = Tokens.CHARACTER;
-        secondaryToken = this.addConst(this.nextChar);
-        this.readNextChar();
+        secondaryToken = this.addConst("char", this.nextChar);
+        this.readNextChar(); // pular o '
         this.readNextChar();
       } else if (this.nextChar == ":") {
         this.readNextChar();
@@ -265,19 +265,19 @@ export default class Lexical {
   }
 
   getLogs() {
-    let logs = [];
+    const logs = [];
 
     if (this.lexicalErrors.length) {
-      logs = this.lexicalErrors.map(
-        (e) => `Line ${e.line}, Char ${e.char}: ${e.message}`
+      logs.push(
+        ...this.lexicalErrors.map(
+          (e) => `Line ${e.line}, Char ${e.char}: ${e.message}`
+        )
       );
-    } else {
-      logs = ["There are no lexical errors"];
     }
 
     this.tokens.forEach((t) => {
       let log = t.token;
-      if (t.secondaryToken) {
+      if (t.secondaryToken != null) {
         log += " " + t.secondaryToken;
       }
       logs.push(log);

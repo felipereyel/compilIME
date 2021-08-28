@@ -10,7 +10,7 @@
           <button disabled>Compile!</button>
         </div>
         <div v-if="analysisLogs.length" class="logs">
-          <h3>Result</h3>
+          <h3>Result: {{ result }}</h3>
           <span v-for="log in analysisLogs" :key="log" class="log">
             {{ log }}
           </span>
@@ -33,6 +33,7 @@ export default {
     return {
       fileContent: null,
       analysisLogs: [],
+      result: "",
     };
   },
   methods: {
@@ -52,7 +53,10 @@ export default {
     lexical() {
       const lexical = new Lexical(this.fileContent);
       lexical.run();
-      this.analysisLogs = lexical.getLogs();
+      (this.result = lexical.lexicalErrors.length
+        ? "There were some lexical errors"
+        : "There are no lexical errors"),
+        (this.analysisLogs = lexical.getLogs());
     },
   },
 };
