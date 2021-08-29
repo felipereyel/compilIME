@@ -264,25 +264,28 @@ export default class Lexical {
     } while (token != Tokens.EOF);
   }
 
-  getLogs() {
+  getResults() {
     const logs = [];
 
     if (this.lexicalErrors.length) {
+      logs.push("There were some lexical errors");
       logs.push(
         ...this.lexicalErrors.map(
           (e) => `Line ${e.line}, Char ${e.char}: ${e.message}`
         )
       );
+    } else {
+      logs.push("There are no lexical errors");
     }
 
-    this.tokens.forEach((t) => {
-      let log = t.token;
+    const tokens = this.tokens.map((t) => {
+      let fullToken = t.token;
       if (t.secondaryToken != null) {
-        log += " " + t.secondaryToken;
+        fullToken += " " + t.secondaryToken;
       }
-      logs.push(log);
+      return fullToken;
     });
 
-    return logs;
+    return { logs, tokens };
   }
 }
