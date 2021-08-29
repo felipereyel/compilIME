@@ -19,7 +19,7 @@ export default class Lexical {
   programContent = "";
 
   vConsts = [];
-  identifiers = {};
+  identifiers = [];
 
   nextChar = " ";
   currentLine = 1;
@@ -81,10 +81,10 @@ export default class Lexical {
   // }
 
   searchName(name) {
-    if (!this.identifiers[name]) {
-      this.identifiers[name] = Object.keys(this.identifiers).length;
+    if (this.identifiers.findIndex((e) => e == name) == -1) {
+      this.identifiers.push(name);
     }
-    return this.identifiers[name];
+    return this.identifiers.findIndex((e) => e == name);
   }
 
   nextToken() {
@@ -109,7 +109,6 @@ export default class Lexical {
       }
     } else if (isDigit(this.nextChar)) {
       let num = "";
-      num += this.nextChar;
       while (isDigit(this.nextChar)) {
         num += this.nextChar;
         this.readNextChar();
@@ -266,7 +265,6 @@ export default class Lexical {
 
   getResults() {
     const logs = [];
-
     if (this.lexicalErrors.length) {
       logs.push("There were some lexical errors");
       logs.push(
@@ -286,6 +284,14 @@ export default class Lexical {
       return fullToken;
     });
 
-    return { logs, tokens };
+    const consts = this.vConsts.map(
+      (c, idx) => `Index: ${idx}, Type: ${c.type}, Value: ${c.value}`
+    );
+
+    const identifiers = this.identifiers.map(
+      (c, idx) => `Index: ${idx}, ID: ${c}`
+    );
+
+    return { logs, tokens, consts, identifiers };
   }
 }

@@ -16,6 +16,11 @@
         />
         <log-list v-if="currentTab == 'logs'" :logs="result.logs" />
         <pre-list v-if="currentTab == 'tokens'" :list="result.tokens" />
+        <pre-list
+          v-if="currentTab == 'identifiers'"
+          :list="result.identifiers"
+        />
+        <pre-list v-if="currentTab == 'consts'" :list="result.consts" />
       </div>
     </div>
   </div>
@@ -50,6 +55,14 @@ export default {
         {
           label: "Tokens",
           tab: "tokens",
+        },
+        {
+          label: "Identifiers",
+          tab: "identifiers",
+        },
+        {
+          label: "Consts",
+          tab: "consts",
         },
         // {
         //   label: "Tokenized File",
