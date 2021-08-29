@@ -1,6 +1,19 @@
 <template>
   <div class="home">
-    <input type="file" :multiple="false" @input="fileInput" />
+    <div class="file-chooser">
+      <dropdown
+        :options="options"
+        placeholder="Choose from examples"
+        @select="changeCode"
+      />
+      <span class="file-span"> or </span>
+      <input
+        class="uploadbtn"
+        type="file"
+        :multiple="false"
+        @input="fileInput"
+      />
+    </div>
     <div v-if="fileContent" class="compiler">
       <code-view :code="fileContent" />
       <div class="control-buttons">
@@ -29,6 +42,9 @@
 <script>
 /* eslint-disable vue/no-unused-components */
 import Lexical from "../utils/compiler/src/lexical";
+import { options } from "../utils/examples";
+
+import Dropdown from "../components/Dropdown.vue";
 import CodeView from "../components/CodeView.vue";
 import PreList from "../components/PreList.vue";
 import LogList from "../components/LogList.vue";
@@ -38,6 +54,7 @@ export default {
   name: "Home",
   components: {
     CodeView,
+    Dropdown,
     PreList,
     LogList,
     TabList,
@@ -69,21 +86,21 @@ export default {
         //   tab: "token-file",
         // },
       ],
+      options,
     };
   },
   methods: {
     fileInput(evt) {
       if (evt.target.files[0]) {
-        this.analysisLogs = [];
         const reader = new FileReader();
-        reader.onload = () => {
-          this.fileContent = reader.result;
-        };
-        reader.onerror = () => {
-          this.fileContent = "error reading file";
-        };
+        reader.onload = () => this.changeCode(reader.result);
+        reader.onerror = () => this.changeCode("error reading file");
         reader.readAsText(evt.target.files[0], "UTF-8");
       }
+    },
+    changeCode(content) {
+      this.result = {};
+      this.fileContent = content;
     },
     lexical() {
       const lexical = new Lexical(this.fileContent);
@@ -103,5 +120,19 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+}
+
+.file-chooser {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.file-span {
+  margin: 0 30px;
+}
+
+.uploadbtn {
+  width: 157px;
 }
 </style>
