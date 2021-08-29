@@ -1,6 +1,8 @@
 <template>
   <div class="about">
     <h2>Frontend for SSL compiler</h2>
+    <h3>Tokens Enum</h3>
+    <pre-list :list="tokens" />
     <h3>Authors</h3>
     <lu>
       <li>Felipe Reyel</li>
@@ -23,3 +25,20 @@
     </lu>
   </div>
 </template>
+
+<script>
+import Tokens from "../utils/compiler/src/lexicalTokens";
+import PreList from "../components/PreList.vue";
+
+export default {
+  name: "About",
+  components: {
+    PreList,
+  },
+  data() {
+    return {
+      tokens: Object.keys(Tokens).map((t) => `${Tokens[t]} -> ${t}`),
+    };
+  },
+};
+</script>
