@@ -14,11 +14,7 @@
           :tablist="tabs"
           @change="currentTab = $event"
         />
-        <div class="logs-container" v-if="currentTab == 'logs'">
-          <span v-for="(log, idx) in result.logs" :key="idx" class="log">
-            {{ log }}
-          </span>
-        </div>
+        <log-list v-if="currentTab == 'logs'" :logs="result.logs" />
         <pre-list v-if="currentTab == 'tokens'" :list="result.tokens" />
       </div>
     </div>
@@ -30,6 +26,7 @@
 import Lexical from "../utils/compiler/src/lexical";
 import CodeView from "../components/CodeView.vue";
 import PreList from "../components/PreList.vue";
+import LogList from "../components/LogList.vue";
 import TabList from "../components/TabList.vue";
 
 export default {
@@ -37,6 +34,7 @@ export default {
   components: {
     CodeView,
     PreList,
+    LogList,
     TabList,
   },
   data() {
@@ -92,14 +90,5 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-}
-
-.logs-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.log {
-  padding: 5px 0;
 }
 </style>
