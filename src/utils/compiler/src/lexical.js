@@ -237,8 +237,14 @@ export default class Lexical {
           token = Tokens.GREATER_THAN;
         }
       } else {
-        this.readNextChar();
         token = Tokens.UNKNOWN;
+        this.lexicalErrors.push({
+          message: "unknown caracter",
+          line: this.currentLine,
+          char: this.currentChar,
+          absoluteChar: this.absoluteCurrentChar,
+        });
+        this.readNextChar();
       }
     }
     return [token, secondaryToken];
@@ -249,17 +255,7 @@ export default class Lexical {
     let token, secondaryToken;
     do {
       [token, secondaryToken] = this.nextToken();
-
       this.tokens.push({ token, secondaryToken });
-
-      if (token == Tokens.UNKNOWN) {
-        this.lexicalErrors.push({
-          message: "unknown caracter",
-          line: this.currentLine,
-          char: this.currentChar,
-          absoluteChar: this.absoluteCurrentChar,
-        });
-      }
     } while (token != Tokens.EOF);
   }
 
