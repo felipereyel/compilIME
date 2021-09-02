@@ -34,6 +34,10 @@
           :list="result.identifiers"
         />
         <pre-list v-if="currentTab == 'consts'" :list="result.consts" />
+        <pre-list
+          v-if="currentTab == 'readableTokens'"
+          :list="result.readableTokens"
+        />
       </div>
     </div>
   </div>
@@ -80,6 +84,10 @@ export default {
         {
           label: "Consts",
           tab: "consts",
+        },
+        {
+          label: "Readable Tokens",
+          tab: "readableTokens",
         },
         // {
         //   label: "Tokenized File",
