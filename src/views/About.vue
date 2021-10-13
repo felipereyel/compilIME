@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import Tokens from "../utils/compiler/src/lexicalTokens";
+import { Tokens } from "../utils/compiler/src/lexical/header";
 import PreList from "../components/PreList.vue";
 
 export default {

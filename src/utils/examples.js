@@ -58,55 +58,55 @@ function mmc(a: integer, b: integer): integer {
 %%
 `,
   },
-  // {
-  //   label: "Wrong parser",
-  //   value: `
-  //   function dois(): integer {
-  //     return 2
-  //   }
-  //   `,
-  // },
-  // {
-  //   label: "Wrong scope - error",
-  //   value: `
-  //   function dois(): integer {
-  //     var x: integer;
-  //     x=2;
-  //     return x;
-  //   }
+  {
+    label: "Wrong parser",
+    value: `
+    function dois(): integer {
+      return 2
+    }
+    `,
+  },
+  {
+    label: "Wrong scope - error",
+    value: `
+    function dois(): integer {
+      var x: integer;
+      x=2;
+      return x;
+    }
 
-  //   function f(): integer {
-  //     var t: integer;
-  //     var t: integer;
-  //   }
-  //   `,
-  // },
-  // {
-  //   label: "Wrong scope - warning",
-  //   value: `
-  //   function dois(): integer {
-  //     var x: integer;
-  //     x=2;
-  //     return x;
-  //   }
+    function f(): integer {
+      var t: integer;
+      var t: integer;
+    }
+    `,
+  },
+  {
+    label: "Wrong scope - warning",
+    value: `
+    function dois(): integer {
+      var x: integer;
+      x=2;
+      return x;
+    }
 
-  //   function f(): integer {
-  //     var t: integer;
-  //     x=2;
-  //   }
-  //   `,
-  // },
-  // {
-  //   label: "Wrong type",
-  //   value: `
-  //   function dois(): integer {
-  //     return 2;
-  //   }
+    function f(): integer {
+      var t: integer;
+      x=2;
+    }
+    `,
+  },
+  {
+    label: "Wrong type",
+    value: `
+    function dois(): integer {
+      return 2;
+    }
 
-  //   function loka(): integer {
-  //     var letra: char;
-  //     letra = dois();
-  //   }
-  //   `,
-  // },
+    function loka(): integer {
+      var letra: char;
+      letra = dois();
+    }
+    `,
+  },
 ];

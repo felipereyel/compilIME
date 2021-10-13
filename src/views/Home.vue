@@ -18,26 +18,33 @@
       <code-view :code="fileContent" />
       <div class="control-buttons">
         <button @click="lexical">Lexical analysis</button>
-        <button disabled>Syntax analysis</button>
-        <button disabled>Compile!</button>
+        <button @click="compile">Compile!</button>
       </div>
-      <div v-if="result.logs">
+      <div v-if="lexicalResult.logs">
         <tab-list
           :currentTab="currentTab"
-          :tablist="tabs"
+          :tablist="lexicalTabs"
           @change="currentTab = $event"
         />
-        <log-list v-if="currentTab == 'logs'" :logs="result.logs" />
-        <pre-list v-if="currentTab == 'tokens'" :list="result.tokens" />
+        <log-list v-if="currentTab == 'logs'" :logs="lexicalResult.logs" />
+        <pre-list v-if="currentTab == 'tokens'" :list="lexicalResult.tokens" />
         <pre-list
           v-if="currentTab == 'identifiers'"
-          :list="result.identifiers"
+          :list="lexicalResult.identifiers"
         />
-        <pre-list v-if="currentTab == 'consts'" :list="result.consts" />
+        <pre-list v-if="currentTab == 'consts'" :list="lexicalResult.consts" />
         <pre-list
           v-if="currentTab == 'readableTokens'"
-          :list="result.readableTokens"
+          :list="lexicalResult.readableTokens"
         />
+      </div>
+      <div v-if="compileResult.out">
+        <tab-list
+          :currentTab="currentTab"
+          :tablist="compileTabs"
+          @change="currentTab = $event"
+        />
+        <pre-list v-if="currentTab == 'logs'" :list="compileResult.out" />
       </div>
     </div>
   </div>
@@ -46,6 +53,7 @@
 <script>
 /* eslint-disable vue/no-unused-components */
 import Lexical from "../utils/compiler/src/lexical";
+import Syntatical from "../utils/compiler/src/syntatical";
 import { options } from "../utils/examples";
 
 import Dropdown from "../components/Dropdown.vue";
@@ -66,9 +74,10 @@ export default {
   data() {
     return {
       fileContent: null,
-      result: {},
+      lexicalResult: {},
+      compileResult: {},
       currentTab: "logs",
-      tabs: [
+      lexicalTabs: [
         {
           label: "Result Logs",
           tab: "logs",
@@ -94,6 +103,12 @@ export default {
         //   tab: "token-file",
         // },
       ],
+      compileTabs: [
+        {
+          label: "Result code",
+          tab: "logs",
+        },
+      ],
       options,
     };
   },
@@ -107,13 +122,19 @@ export default {
       }
     },
     changeCode(content) {
-      this.result = {};
+      this.lexicalResult = {};
       this.fileContent = content;
     },
     lexical() {
       const lexical = new Lexical(this.fileContent);
       lexical.run();
-      this.result = lexical.getResults();
+      this.lexicalResult = lexical.getResults();
+    },
+    compile() {
+      const lexical = new Lexical(this.fileContent);
+      const syntatical = new Syntatical(lexical);
+      syntatical.parse();
+      this.compileResult.out = syntatical.scope._out.split("\n");
     },
   },
 };
