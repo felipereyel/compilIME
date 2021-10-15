@@ -33,10 +33,6 @@
           :list="lexicalResult.identifiers"
         />
         <pre-list v-if="currentTab == 'consts'" :list="lexicalResult.consts" />
-        <pre-list
-          v-if="currentTab == 'readableTokens'"
-          :list="lexicalResult.readableTokens"
-        />
       </div>
       <div v-if="compileResult.out">
         <tab-list
@@ -94,14 +90,6 @@ export default {
           label: "Consts",
           tab: "consts",
         },
-        {
-          label: "Readable Tokens",
-          tab: "readableTokens",
-        },
-        // {
-        //   label: "Tokenized File",
-        //   tab: "token-file",
-        // },
       ],
       compileTabs: [
         {

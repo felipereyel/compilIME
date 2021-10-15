@@ -52,25 +52,25 @@ export default class Lexical {
 
   searchKeyword(name) {
     const key_words = {
-      "array": Tokens.ARRAY,
-      "boolean": Tokens.BOOLEAN,
-      "break": Tokens.BREAK,
-      "char": Tokens.CHAR,
-      "continue": Tokens.CONTINUE,
-      "do": Tokens.DO,
-      "else": Tokens.ELSE,
-      "false": Tokens.FALSE,
-      "function": Tokens.FUNCTION,
-      "if": Tokens.IF,
-      "integer": Tokens.INTEGER,
-      "of": Tokens.OF,
-      "string": Tokens.STRING,
-      "struct": Tokens.STRUCT,
-      "true": Tokens.TRUE,
-      "type": Tokens.TYPE,
-      "var": Tokens.VAR,
-      "while": Tokens.WHILE,
-      "return": Tokens.RETURN,
+      array: Tokens.ARRAY,
+      boolean: Tokens.BOOLEAN,
+      break: Tokens.BREAK,
+      char: Tokens.CHAR,
+      continue: Tokens.CONTINUE,
+      do: Tokens.DO,
+      else: Tokens.ELSE,
+      false: Tokens.FALSE,
+      function: Tokens.FUNCTION,
+      if: Tokens.IF,
+      integer: Tokens.INTEGER,
+      of: Tokens.OF,
+      string: Tokens.STRING,
+      struct: Tokens.STRUCT,
+      true: Tokens.TRUE,
+      type: Tokens.TYPE,
+      var: Tokens.VAR,
+      while: Tokens.WHILE,
+      return: Tokens.RETURN,
     };
     const idx = key_words[name];
     return idx == undefined ? Tokens.IDT : idx;
@@ -287,7 +287,7 @@ export default class Lexical {
 
     const tokens = this.tokens.map((t) => {
       let fullToken = t.token;
-      if (t.secondaryToken != null) {
+      if (t.secondaryToken != -1) {
         fullToken += " " + t.secondaryToken;
       }
       return fullToken;
@@ -301,18 +301,6 @@ export default class Lexical {
       (c, idx) => `Index: ${idx}, ID: ${c}`
     );
 
-    const readableTokens = this.tokens.map((t) => {
-      let fullToken = keyByValue(Tokens, t.token);
-      if (t.secondaryToken != null) {
-        fullToken +=
-          " > " +
-          (t.token == Tokens.IDT
-            ? this.getName(t.secondaryToken)
-            : this.getConst(t.secondaryToken).value);
-      }
-      return fullToken;
-    });
-
-    return { logs, tokens, consts, identifiers, readableTokens };
+    return { logs, tokens, consts, identifiers };
   }
 }
