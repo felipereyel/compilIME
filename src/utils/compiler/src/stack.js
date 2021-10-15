@@ -2,7 +2,7 @@ export default class Stack {
   _stack = [];
 
   push(el) {
-    this._stack.push(JSON.parse(JSON.stringify(el)));
+    this._stack.push(el);
   }
 
   pop(n = 1) {

@@ -24,10 +24,10 @@ const IS_TYPE_KIND = (k) =>
   ].includes(k);
 
 export default class Scope {
-  _out = ""; /*Output File*/
-  stack = new Stack(); /*Semantic Stack*/
-  nFuncs = 0; /*Functions*/
-  curFunction = {}; /*Symbol Tables*/
+  _out = "";
+  stack = new Stack();
+  nFuncs = 0;
+  curFunction = {};
 
   nCurrentLevel = 0;
   SymbolTable = {};
@@ -43,12 +43,11 @@ export default class Scope {
     this._out += content;
   }
 
-  labelNo = 0; /*Label Generation*/
+  labelNo = 0;
   newLabel() {
     return this.labelNo++;
   }
 
-  /*Scope Analysis*/
   newBlock() {
     this.nCurrentLevel++;
     this.SymbolTable[this.nCurrentLevel] = null;
@@ -274,7 +273,7 @@ export default class Scope {
         this.IDU_.nont = States.IDU;
         this.IDU_.ID.name = this.name;
 
-        if ((this.p = this.find(name)) == null) {
+        if ((this.p = this.find(this.name)) == null) {
           this.Error(ErrorCode.ERR_NO_DECL);
           this.p = this.define(this.name);
         }
