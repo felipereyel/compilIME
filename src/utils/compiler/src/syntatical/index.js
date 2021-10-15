@@ -22,9 +22,8 @@ export default class Syntatical {
   parse() {
     const stack = new Stack();
 
-    const final_state = 1;
     let q = 0;
-    stack.push(q);
+    stack.push(0);
     let tk = this.lexical.nextToken()[0];
 
     do {
@@ -46,7 +45,6 @@ export default class Syntatical {
         }
         q = stack.top;
       }
-    } while (q != final_state);
-    console.log("Passou\n");
+    } while (q != 1);
   }
 }

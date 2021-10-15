@@ -1,67 +1,41 @@
 export const options = [
   {
-    label: "Correct",
-    value: `function sqrt(n: integer) : integer {
-  var diff,media,aux,min,max: integer;
-
-  do{
-    media = max+min;
-    media = media/2;
-    aux = media*media;
-    if (aux > n) {
-      max = media;
-    } else {
-      min = media;
-    }
-    diff = max - min;
-  }while (diff > 1);
-
-  return media;
-}
-
-function mmc(a: integer, b: integer): integer {
-  var aa,bb : integer;
-
-  aa=0;
-  bb=0;
-  while(aa != bb){
-    if (aa < bb){
-      aa = aa+a;
-    }else{
-      bb = bb+b;
-    }
-  }
-
-  return aa;
-  }
-
-  function primo(n: integer): boolean {
-  var divisor: integer;
-  divisor = 2;
-  do {
-    if(mmc(n,divisor) == n){
-      return true;
-    } else {
-      divisor = divisor + 1;
-    }
-  } while(divisor < sqrt(n));
-  return false;
-}
-`,
-  },
-  {
     label: "Lexical Error",
     value: `function banana(): integer {
-  return 2; %%%-
+      return 2; %%%-
 }
 `,
   },
   {
     label: "Algebraic function",
-    value: `
-    function algebra () : integer {
+    value: `function algebra () : integer {
       return (1 + 2) * ( 3 / 4 );
-    }
+}
     `,
+  },
+  {
+    label: "Next",
+    value: `function next (a: integer) : integer {
+      return a + 1; 
+}
+`,
+  },
+  {
+    label: "Soma",
+    value: `function soma (a: integer, b: integer) : integer {
+      var sum: integer;
+      sum = a + b;
+      return sum;
+}
+`,
+  },
+  {
+    label: "Auxiliar",
+    value: `function aux (a: integer) : integer {
+      var au, auxx: integer;
+      au = a;
+      return au; 
+}
+`,
   },
 ];

@@ -3,7 +3,7 @@ import { isEqual } from "lodash";
 import {
   Kind,
   ErrorCode,
-  Obj,
+  ObjectStruct,
   Attr,
   int_,
   char_,
@@ -60,7 +60,7 @@ export default class Scope {
   }
 
   define(aName) {
-    const obj = new Obj();
+    const obj = new ObjectStruct();
     obj.nName = aName;
     obj.pNext = null;
 
@@ -103,61 +103,56 @@ export default class Scope {
     return obj;
   }
 
-  Error(code) {
-    let error = `Linha: ${this.lexical.currentLine} - `;
+  recordError(code) {
+    let error = `Line: ${this.lexical.currentLine} - `;
     switch (code) {
       case ErrorCode.ERR_NO_DECL:
-        error += "Variavel nao declarada";
+        error += "Variable not declared";
         break;
       case ErrorCode.ERR_REDCL:
-        error += "Variavel ja foi declarada";
+        error += "Variable already declared";
         break;
       case ErrorCode.ERR_TYPE_EXPECTED:
-        error += "Type Expected: Um tipo nao foi declarado anteriormente";
+        error += "Type Expected";
         break;
       case ErrorCode.ERR_BOOL_TYPE_EXPECTED:
-        error += "Bool Expected: Um tipo booleano e esperado para expressao";
+        error += "Bool Expected";
         break;
       case ErrorCode.ERR_INVALID_TYPE:
-        error += "Invalid Type: O tipo e invalido para a operacao";
+        error += "Invalid Type";
         break;
       case ErrorCode.ERR_TYPE_MISMATCH:
-        error += "Type Mismatch: O tipo e invalido para a operacao";
+        error += "Type Mismatch";
         break;
       case ErrorCode.ERR_KIND_NOT_STRUCT:
-        error +=
-          "Kind not Struct: A operacao so pode ser realizada em tipos Struct";
+        error += "Kind not Struct";
         break;
       case ErrorCode.ERR_FIELD_NOT_DECL:
-        error += "Field not Declared: O campo nao foi declarado na estrutura";
+        error += "Field not Declared";
         break;
       case ErrorCode.ERR_KIND_NOT_ARRAY:
-        error +=
-          "Kind not Array: A operacao so pode ser realizada para um Array";
+        error += "Kind not Array";
         break;
       case ErrorCode.ERR_INVALID_INDEX_TYPE:
-        error += "Invalid Index: O Indice especificado para o Array e invalido";
+        error += "Invalid Index";
         break;
       case ErrorCode.ERR_KIND_NOT_VAR:
-        error += "Kind not Var: A operacao so e valida com tipos Var";
+        error += "Kind not Var";
         break;
       case ErrorCode.ERR_KIND_NOT_FUNCTION:
-        error += "Kind not Function: A operacao so e valida com tipos Function";
+        error += "Kind not Function";
         break;
       case ErrorCode.ERR_TOO_FEW_ARGS:
-        error +=
-          "Too Few Args: O numero de parametros especificado nao e suficiente";
+        error += "Too Few Args";
         break;
       case ErrorCode.ERR_TOO_MANY_ARGS:
-        error +=
-          "Too Many Args: O numero de parametros especificado e maior que o especificado";
+        error += "Too Many Args";
         break;
       case ErrorCode.ERR_PARAM_TYPE:
-        error += "Param Type: O tipo especificado para o parametro e invalido";
+        error += "Param Type";
         break;
       case ErrorCode.ERR_RETURN_TYPE_MISMATCH:
-        error +=
-          "Return Type Mismatch: O tipo de retorno não corresponde ao tipo especificado para a função";
+        error += "Return Type Mismatch";
         break;
       default:
         break;
@@ -167,6 +162,7 @@ export default class Scope {
   }
 
   checkTypes(t1, t2) {
+    // check is equal
     if (isEqual(t1, t2)) {
       return true;
     } else if (isEqual(t1, universal_) || isEqual(t2, universal_)) {
@@ -185,13 +181,14 @@ export default class Scope {
           return this.checkTypes(t1.Array.pElemType, t2.Array.pElemType);
         }
       } else if (t1.eKind == Kind.STRUCT_TYPE_) {
-        // fix me
-        const f1 = t1.Struct.pFields;
-        const f2 = t2.Struct.pFields;
+        let f1 = t1.Struct.pFields;
+        let f2 = t2.Struct.pFields;
         while (f1 != null && f2 != null) {
           if (!this.checkTypes(f1.Field.pType, f2.Field.pType)) {
             return false;
           }
+          f1 = f1.pNext;
+          f2 = f2.pNext;
         }
         return f1 == null && f2 == null;
       }
@@ -206,9 +203,9 @@ export default class Scope {
   l = null;
   l1 = null;
   l2 = null;
-  p = new Obj();
-  t = new Obj();
-  f = new Obj();
+  p = new ObjectStruct();
+  t = new ObjectStruct();
+  f = new ObjectStruct();
   IDD_ = new Attr();
   IDU_ = new Attr();
   ID_ = new Attr();
@@ -260,7 +257,7 @@ export default class Scope {
         this.IDD_.nont = States.IDD;
         this.IDD_.ID.name = this.name;
         if ((this.p = this.search(this.name)) != null) {
-          this.Error(ErrorCode.ERR_REDCL);
+          this.recordError(ErrorCode.ERR_REDCL);
         } else {
           this.p = this.define(this.name);
         }
@@ -275,7 +272,7 @@ export default class Scope {
         this.IDU_.ID.name = this.name;
 
         if ((this.p = this.find(this.name)) == null) {
-          this.Error(ErrorCode.ERR_NO_DECL);
+          this.recordError(ErrorCode.ERR_NO_DECL);
           this.p = this.define(this.name);
         }
         this.IDU_.ID.obj = this.p;
@@ -299,7 +296,7 @@ export default class Scope {
         } else {
           this.T_.T.type = universal_;
           this.T_.nSize = 0;
-          this.Error(ErrorCode.ERR_TYPE_EXPECTED);
+          this.recordError(ErrorCode.ERR_TYPE_EXPECTED);
         }
         this.T_.nont = States.T;
         this.stack.push(this.T_);
@@ -603,7 +600,7 @@ export default class Scope {
 
         this.t = this.E_.E.type;
         if (!this.checkTypes(this.t, bool_)) {
-          this.Error(ErrorCode.ERR_BOOL_TYPE_EXPECTED);
+          this.recordError(ErrorCode.ERR_BOOL_TYPE_EXPECTED);
         }
 
         this.addOut(`L${this.MT_.MT.label}\n`);
@@ -631,7 +628,7 @@ export default class Scope {
 
         this.t = this.E_.E.type;
         if (!this.checkTypes(this.t, bool_)) {
-          this.Error(ErrorCode.ERR_BOOL_TYPE_EXPECTED);
+          this.recordError(ErrorCode.ERR_BOOL_TYPE_EXPECTED);
         }
         this.addOut(`\tL${this.l}\n`);
         break;
@@ -654,7 +651,7 @@ export default class Scope {
 
         this.t = this.E_.E.type;
         if (!this.checkTypes(this.t, bool_)) {
-          this.Error(ErrorCode.ERR_BOOL_TYPE_EXPECTED);
+          this.recordError(ErrorCode.ERR_BOOL_TYPE_EXPECTED);
         }
 
         this.addOut(`\tJMP_BW L${this.l1}\nL${this.l2}\n`);
@@ -669,7 +666,7 @@ export default class Scope {
 
         this.t = this.E_.E.type;
         if (!this.checkTypes(this.t, bool_)) {
-          this.Error(ErrorCode.ERR_BOOL_TYPE_EXPECTED);
+          this.recordError(ErrorCode.ERR_BOOL_TYPE_EXPECTED);
         }
 
         this.addOut(`\tNOT\n\tTJMP_BW L${this.l}\n`);
@@ -685,7 +682,7 @@ export default class Scope {
         if (
           !this.checkTypes(this.curFunction.Function.pRetType, this.E_.E.type)
         ) {
-          this.Error(ErrorCode.ERR_RETURN_TYPE_MISMATCH);
+          this.recordError(ErrorCode.ERR_RETURN_TYPE_MISMATCH);
         }
         this.addOut("\tRET\n");
         break;
@@ -695,11 +692,11 @@ export default class Scope {
         this.E1_ = this.stack.top;
         this.stack.pop();
         if (!this.checkTypes(this.E1_.E.type, bool_)) {
-          this.Error(ErrorCode.ERR_BOOL_TYPE_EXPECTED);
+          this.recordError(ErrorCode.ERR_BOOL_TYPE_EXPECTED);
         }
 
         if (!this.checkTypes(this.L_.L.type, bool_)) {
-          this.Error(ErrorCode.ERR_BOOL_TYPE_EXPECTED);
+          this.recordError(ErrorCode.ERR_BOOL_TYPE_EXPECTED);
         }
 
         this.E0_.E.type = bool_;
@@ -713,11 +710,11 @@ export default class Scope {
         this.E1_ = this.stack.top;
         this.stack.pop();
         if (!this.checkTypes(this.E1_.E.type, bool_)) {
-          this.Error(ErrorCode.ERR_BOOL_TYPE_EXPECTED);
+          this.recordError(ErrorCode.ERR_BOOL_TYPE_EXPECTED);
         }
 
         if (!this.checkTypes(this.L_.L.type, bool_)) {
-          this.Error(ErrorCode.ERR_BOOL_TYPE_EXPECTED);
+          this.recordError(ErrorCode.ERR_BOOL_TYPE_EXPECTED);
         }
 
         this.E0_.E.type = bool_;
@@ -739,7 +736,7 @@ export default class Scope {
         this.stack.pop();
 
         if (!this.checkTypes(this.L1_.L.type, this.R_.R.type)) {
-          this.Error(ErrorCode.ERR_TYPE_MISMATCH);
+          this.recordError(ErrorCode.ERR_TYPE_MISMATCH);
         }
         this.L0_.L.type = bool_;
         this.L0_.nont = States.L;
@@ -755,7 +752,7 @@ export default class Scope {
         this.stack.pop();
 
         if (!this.checkTypes(this.L1_.L.type, this.R_.R.type)) {
-          this.Error(ErrorCode.ERR_TYPE_MISMATCH);
+          this.recordError(ErrorCode.ERR_TYPE_MISMATCH);
         }
         this.L0_.L.type = bool_;
         this.L0_.nont = States.L;
@@ -769,7 +766,7 @@ export default class Scope {
         this.stack.pop();
 
         if (!this.checkTypes(this.L1_.L.type, this.R_.R.type)) {
-          this.Error(ErrorCode.ERR_TYPE_MISMATCH);
+          this.recordError(ErrorCode.ERR_TYPE_MISMATCH);
         }
         this.L0_.L.type = bool_;
         this.L0_.nont = States.L;
@@ -783,7 +780,7 @@ export default class Scope {
         this.stack.pop();
 
         if (!this.checkTypes(this.L1_.L.type, this.R_.R.type)) {
-          this.Error(ErrorCode.ERR_TYPE_MISMATCH);
+          this.recordError(ErrorCode.ERR_TYPE_MISMATCH);
         }
         this.L0_.L.type = bool_;
         this.L0_.nont = States.L;
@@ -797,7 +794,7 @@ export default class Scope {
         this.stack.pop();
 
         if (!this.checkTypes(this.L1_.L.type, this.R_.R.type)) {
-          this.Error(ErrorCode.ERR_TYPE_MISMATCH);
+          this.recordError(ErrorCode.ERR_TYPE_MISMATCH);
         }
         this.L0_.L.type = bool_;
         this.L0_.nont = States.L;
@@ -811,7 +808,7 @@ export default class Scope {
         this.stack.pop();
 
         if (!this.checkTypes(this.L1_.L.type, this.R_.R.type)) {
-          this.Error(ErrorCode.ERR_TYPE_MISMATCH);
+          this.recordError(ErrorCode.ERR_TYPE_MISMATCH);
         }
         this.L0_.L.type = bool_;
         this.L0_.nont = States.L;
@@ -832,14 +829,14 @@ export default class Scope {
         this.stack.pop();
 
         if (!this.checkTypes(this.R1_.R.type, this.K_.K.type)) {
-          this.Error(ErrorCode.ERR_TYPE_MISMATCH);
+          this.recordError(ErrorCode.ERR_TYPE_MISMATCH);
         }
 
         if (
           !this.checkTypes(this.R1_.R.type, int_) &&
           !this.checkTypes(this.R1_.R.type, string_)
         ) {
-          this.Error(ErrorCode.ERR_INVALID_TYPE);
+          this.recordError(ErrorCode.ERR_INVALID_TYPE);
         }
 
         this.R0_.R.type = this.R1_.R.type;
@@ -854,11 +851,11 @@ export default class Scope {
         this.stack.pop();
 
         if (!this.checkTypes(this.R1_.R.type, this.K_.K.type)) {
-          this.Error(ErrorCode.ERR_TYPE_MISMATCH);
+          this.recordError(ErrorCode.ERR_TYPE_MISMATCH);
         }
 
         if (!this.checkTypes(this.R1_.R.type, int_)) {
-          this.Error(ErrorCode.ERR_INVALID_TYPE);
+          this.recordError(ErrorCode.ERR_INVALID_TYPE);
         }
 
         this.R0_.R.type = this.R1_.R.type;
@@ -880,11 +877,11 @@ export default class Scope {
         this.stack.pop();
 
         if (!this.checkTypes(this.K1_.K.type, this.F_.F.type)) {
-          this.Error(ErrorCode.ERR_TYPE_MISMATCH);
+          this.recordError(ErrorCode.ERR_TYPE_MISMATCH);
         }
 
         if (!this.checkTypes(this.K1_.K.type, int_)) {
-          this.Error(ErrorCode.ERR_INVALID_TYPE);
+          this.recordError(ErrorCode.ERR_INVALID_TYPE);
         }
 
         this.K0_.K.type = this.K1_.K.type;
@@ -899,11 +896,11 @@ export default class Scope {
         this.stack.pop();
 
         if (!this.checkTypes(this.K1_.K.type, this.F_.F.type)) {
-          this.Error(ErrorCode.ERR_TYPE_MISMATCH);
+          this.recordError(ErrorCode.ERR_TYPE_MISMATCH);
         }
 
         if (!this.checkTypes(this.K1_.K.type, int_)) {
-          this.Error(ErrorCode.ERR_INVALID_TYPE);
+          this.recordError(ErrorCode.ERR_INVALID_TYPE);
         }
 
         this.K0_.K.type = this.K1_.K.type;
@@ -934,7 +931,7 @@ export default class Scope {
         this.stack.pop();
         this.t = this.LV_.LV.type;
         if (!this.checkTypes(this.t, int_)) {
-          this.Error(ErrorCode.ERR_INVALID_TYPE);
+          this.recordError(ErrorCode.ERR_INVALID_TYPE);
         }
 
         this.F_.F.type = int_;
@@ -948,7 +945,7 @@ export default class Scope {
         this.stack.pop();
         this.t = this.LV_.LV.type;
         if (!this.checkTypes(this.t, int_)) {
-          this.Error(ErrorCode.ERR_INVALID_TYPE);
+          this.recordError(ErrorCode.ERR_INVALID_TYPE);
         }
 
         this.F_.F.type = this.LV_.LV.type;
@@ -962,7 +959,7 @@ export default class Scope {
         this.stack.pop();
         this.t = this.LV_.LV.type;
         if (!this.checkTypes(this.t, int_)) {
-          this.Error(ErrorCode.ERR_INVALID_TYPE);
+          this.recordError(ErrorCode.ERR_INVALID_TYPE);
         }
 
         this.F_.F.type = this.LV_.LV.type;
@@ -977,7 +974,7 @@ export default class Scope {
         this.stack.pop();
         this.t = this.LV_.LV.type;
         if (!this.checkTypes(this.t, int_)) {
-          this.Error(ErrorCode.ERR_INVALID_TYPE);
+          this.recordError(ErrorCode.ERR_INVALID_TYPE);
         }
 
         this.F_.F.type = this.t;
@@ -1001,7 +998,7 @@ export default class Scope {
 
         this.t = this.F1_.F.type;
         if (!this.checkTypes(this.t, int_)) {
-          this.Error(ErrorCode.ERR_INVALID_TYPE);
+          this.recordError(ErrorCode.ERR_INVALID_TYPE);
         }
 
         this.F0_.F.type = this.t;
@@ -1015,7 +1012,7 @@ export default class Scope {
 
         this.t = this.F1_.F.type;
         if (!this.checkTypes(this.t, bool_)) {
-          this.Error(ErrorCode.ERR_INVALID_TYPE);
+          this.recordError(ErrorCode.ERR_INVALID_TYPE);
         }
 
         this.F0_.F.type = this.t;
@@ -1075,7 +1072,7 @@ export default class Scope {
         this.t = this.LV1_.LV.type;
         if (this.t.eKind != Kind.STRUCT_TYPE_) {
           if (this.t.eKind != Kind.UNIVERSAL_) {
-            this.Error(ErrorCode.ERR_KIND_NOT_STRUCT);
+            this.recordError(ErrorCode.ERR_KIND_NOT_STRUCT);
           }
           this.LV0_.LV.type = universal_;
         } else {
@@ -1087,7 +1084,7 @@ export default class Scope {
             this.p = this.p.pNext;
           }
           if (this.p == null) {
-            this.Error(ErrorCode.ERR_FIELD_NOT_DECL);
+            this.recordError(ErrorCode.ERR_FIELD_NOT_DECL);
             this.LV0_.LV.type = universal_;
           } else {
             this.LV0_.LV.type = this.p.Field.pType;
@@ -1110,7 +1107,7 @@ export default class Scope {
           this.LV0_.LV.type = char_;
         } else if (this.t.eKind != Kind.ARRAY_TYPE_) {
           if (this.t.eKind != Kind.UNIVERSAL_) {
-            this.Error(ErrorCode.ERR_KIND_NOT_ARRAY);
+            this.recordError(ErrorCode.ERR_KIND_NOT_ARRAY);
           }
           this.LV0_.LV.type = universal_;
         } else {
@@ -1120,7 +1117,7 @@ export default class Scope {
         }
 
         if (!this.checkTypes(this.E_.E.type, int_)) {
-          this.Error(ErrorCode.ERR_INVALID_INDEX_TYPE);
+          this.recordError(ErrorCode.ERR_INVALID_INDEX_TYPE);
         }
 
         this.LV0_.nont = States.LV;
@@ -1133,7 +1130,7 @@ export default class Scope {
         this.p = this.IDU_.ID.obj;
         if (this.p.eKind != Kind.VAR_ && this.p.eKind != Kind.PARAM_) {
           if (this.p.eKind != Kind.UNIVERSAL_) {
-            this.Error(ErrorCode.ERR_KIND_NOT_VAR);
+            this.recordError(ErrorCode.ERR_KIND_NOT_VAR);
           }
           this.LV_.LV.type = universal_;
         } else {
@@ -1153,7 +1150,7 @@ export default class Scope {
         this.LV_ = this.stack.top;
         this.stack.pop();
         if (!this.checkTypes(this.LV_.LV.type, this.E1_.E.type)) {
-          this.Error(ErrorCode.ERR_TYPE_MISMATCH);
+          this.recordError(ErrorCode.ERR_TYPE_MISMATCH);
         }
 
         this.E0_.F.type = this.E1_.E.type;
@@ -1166,7 +1163,7 @@ export default class Scope {
         this.f = this.IDU_.ID.obj;
 
         if (this.f.eKind != Kind.FUNCTION_) {
-          this.Error(ErrorCode.ERR_KIND_NOT_FUNCTION);
+          this.recordError(ErrorCode.ERR_KIND_NOT_FUNCTION);
           this.MC_.MC.type = universal_;
           this.MC_.MC.param = null;
           this.MC_.MC.err = true;
@@ -1189,11 +1186,11 @@ export default class Scope {
         if (!this.MC_.MC.err) {
           this.p = this.MC_.MC.param;
           if (this.p == null) {
-            this.Error(ErrorCode.ERR_TOO_MANY_ARGS);
+            this.recordError(ErrorCode.ERR_TOO_MANY_ARGS);
             this.LE_.LE.err = true;
           } else {
             if (!this.checkTypes(this.p.Param.pType, this.E_.E.type)) {
-              this.Error(ErrorCode.ERR_PARAM_TYPE);
+              this.recordError(ErrorCode.ERR_PARAM_TYPE);
             }
             this.LE_.LE.param = this.p.pNext;
             this.LE_.LE.this.n = this.n + 1;
@@ -1214,11 +1211,11 @@ export default class Scope {
         if (!this.LE1_.LE.err) {
           this.p = this.LE1_.LE.param;
           if (this.p == null) {
-            this.Error(ErrorCode.ERR_TOO_MANY_ARGS);
+            this.recordError(ErrorCode.ERR_TOO_MANY_ARGS);
             this.LE0_.LE.err = true;
           } else {
             if (!this.checkTypes(this.p.Param.pType, this.E_.E.type)) {
-              this.Error(ErrorCode.ERR_PARAM_TYPE);
+              this.recordError(ErrorCode.ERR_PARAM_TYPE);
             }
             this.LE0_.LE.param = this.p.pNext;
             this.LE0_.LE.this.n = this.n + 1;
@@ -1251,9 +1248,9 @@ export default class Scope {
         this.F_.F.type = this.MC_.MC.type;
         if (!this.LE_.LE.err) {
           if (this.LE_.LE.n - 1 < this.f.Function.nParams) {
-            this.Error(ErrorCode.ERR_TOO_FEW_ARGS);
+            this.recordError(ErrorCode.ERR_TOO_FEW_ARGS);
           } else if (this.LE_.LE.n - 1 > this.f.Function.nParams) {
-            this.Error(ErrorCode.ERR_TOO_MANY_ARGS);
+            this.recordError(ErrorCode.ERR_TOO_MANY_ARGS);
           }
         }
         this.F_.nont = States.F;

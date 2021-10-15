@@ -31,7 +31,7 @@ export const Kind = {
   UNIVERSAL_: 8,
 };
 
-export class Obj {
+export class ObjectStruct {
   nName = null;
   pNext = null;
   eKind = null;
@@ -176,31 +176,31 @@ export class Attr {
 }
 
 // Int
-export const int_ = new Obj();
+export const int_ = new ObjectStruct();
 int_.nName = -1;
 int_.pNext = null;
 int_.eKind = Kind.SCALAR_TYPE_;
 
 // Char
-export const char_ = new Obj();
+export const char_ = new ObjectStruct();
 char_.nName = -1;
 char_.pNext = null;
 char_.eKind = Kind.SCALAR_TYPE_;
 
 // Bool
-export const bool_ = new Obj();
+export const bool_ = new ObjectStruct();
 bool_.nName = -1;
 bool_.pNext = null;
 bool_.eKind = Kind.SCALAR_TYPE_;
 
 // String
-export const string_ = new Obj();
+export const string_ = new ObjectStruct();
 string_.nName = -1;
 string_.pNext = null;
 string_.eKind = Kind.SCALAR_TYPE_;
 
 // Universal
-export const universal_ = new Obj();
+export const universal_ = new ObjectStruct();
 universal_.nName = -1;
 universal_.pNext = null;
 universal_.eKind = Kind.UNIVERSAL_;
