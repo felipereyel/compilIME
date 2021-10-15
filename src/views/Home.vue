@@ -31,7 +31,10 @@
           :list="lexicalResult.identifiers"
         />
         <pre-list v-if="currentTab == 'consts'" :list="lexicalResult.consts" />
-        <pre-list v-if="currentTab == 'code'" :list="compileResult.out" />
+        <pre-list
+          v-if="currentTab == 'code' && compileResult.out"
+          :list="compileResult.out"
+        />
       </div>
     </div>
   </div>
