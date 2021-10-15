@@ -285,14 +285,6 @@ export default class Lexical {
       logs.push("There are no lexical errors");
     }
 
-    const tokens = this.tokens.map((t) => {
-      let fullToken = t.token;
-      if (t.secondaryToken != -1) {
-        fullToken += " " + t.secondaryToken;
-      }
-      return fullToken;
-    });
-
     const consts = this.vConsts.map(
       (c, idx) => `Index: ${idx}, Type: ${c.type}, Value: ${c.value}`
     );
@@ -301,6 +293,6 @@ export default class Lexical {
       (c, idx) => `Index: ${idx}, ID: ${c}`
     );
 
-    return { logs, tokens, consts, identifiers };
+    return { logs, consts, identifiers };
   }
 }

@@ -15,9 +15,7 @@ export default class Syntatical {
   }
 
   syntaxError() {
-    throw new Error(
-      `Ocorreu um erro de sintaxe na linha: ${this.lexical.currentLine}`
-    );
+    throw new Error(`Syntaxe Error on line: ${this.lexical.currentLine}`);
   }
 
   parse() {

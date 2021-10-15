@@ -17,30 +17,21 @@
     <div v-if="fileContent" class="compiler">
       <code-view :code="fileContent" />
       <div class="control-buttons">
-        <button @click="lexical">Lexical analysis</button>
         <button @click="compile">Compile!</button>
       </div>
-      <div v-if="lexicalResult.logs">
+      <div v-if="logs.length">
         <tab-list
           :currentTab="currentTab"
-          :tablist="lexicalTabs"
+          :tablist="tabs"
           @change="currentTab = $event"
         />
-        <log-list v-if="currentTab == 'logs'" :logs="lexicalResult.logs" />
-        <pre-list v-if="currentTab == 'tokens'" :list="lexicalResult.tokens" />
+        <log-list v-if="currentTab == 'logs'" :logs="logs" />
         <pre-list
           v-if="currentTab == 'identifiers'"
           :list="lexicalResult.identifiers"
         />
         <pre-list v-if="currentTab == 'consts'" :list="lexicalResult.consts" />
-      </div>
-      <div v-if="compileResult.out">
-        <tab-list
-          :currentTab="currentTab"
-          :tablist="compileTabs"
-          @change="currentTab = $event"
-        />
-        <pre-list v-if="currentTab == 'logs'" :list="compileResult.out" />
+        <pre-list v-if="currentTab == 'code'" :list="compileResult.out" />
       </div>
     </div>
   </div>
@@ -70,17 +61,14 @@ export default {
   data() {
     return {
       fileContent: null,
+      logs: [],
       lexicalResult: {},
       compileResult: {},
       currentTab: "logs",
-      lexicalTabs: [
+      tabs: [
         {
           label: "Result Logs",
           tab: "logs",
-        },
-        {
-          label: "Tokens",
-          tab: "tokens",
         },
         {
           label: "Identifiers",
@@ -90,11 +78,9 @@ export default {
           label: "Consts",
           tab: "consts",
         },
-      ],
-      compileTabs: [
         {
           label: "Result code",
-          tab: "logs",
+          tab: "code",
         },
       ],
       options,
@@ -110,19 +96,34 @@ export default {
       }
     },
     changeCode(content) {
-      this.lexicalResult = {};
+      this.resetState();
       this.fileContent = content;
     },
     lexical() {
       const lexical = new Lexical(this.fileContent);
       lexical.run();
       this.lexicalResult = lexical.getResults();
+      this.logs.push(...this.lexicalResult.logs);
     },
     compile() {
+      this.resetState();
+      this.lexical();
+
+      if (this.logs.length > 1) return;
+
       const lexical = new Lexical(this.fileContent);
       const syntatical = new Syntatical(lexical);
-      syntatical.parse();
-      this.compileResult.out = syntatical.scope._out.split("\n");
+      try {
+        syntatical.parse();
+        this.compileResult.out = syntatical.scope._out.split("\n");
+      } catch (e) {
+        this.logs.push(e.message);
+      }
+    },
+    resetState() {
+      this.logs = [];
+      this.lexicalResult = {};
+      this.compileResult = {};
     },
   },
 };
