@@ -119,6 +119,7 @@ export default {
       } catch (e) {
         this.logs.push(e.message);
       }
+      this.logs.push(...syntatical.scope.errors);
     },
     resetState() {
       this.logs = [];

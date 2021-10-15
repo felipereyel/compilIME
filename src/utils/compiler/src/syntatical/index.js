@@ -9,6 +9,7 @@ const IS_REDUCTION = (p) => p < 0;
 const RULE = (p) => -p;
 
 export default class Syntatical {
+  scope;
   constructor(lexical) {
     this.lexical = lexical;
     this.scope = new Scope(this.lexical);

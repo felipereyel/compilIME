@@ -33,6 +33,8 @@ export default class Scope {
   SymbolTable = {};
   SymbolTableLast = {};
 
+  errors = [];
+
   constructor(lexical) {
     this.lexical = lexical;
   }
@@ -161,7 +163,8 @@ export default class Scope {
       default:
         break;
     }
-    console.error(error);
+    // console.error(error);
+    this.errors.push(error);
   }
 
   checkTypes(t1, t2) {
