@@ -50,62 +50,17 @@ function mmc(a: integer, b: integer): integer {
 `,
   },
   {
-    label: "Wrong lexer",
-    value: `function dois(): integer {
-  return 2;
+    label: "Lexical Error",
+    value: `function banana(): integer {
+  return 2; %%%-
 }
-
-%%
 `,
   },
   {
-    label: "Wrong parser",
+    label: "Algebraic function",
     value: `
-    function dois(): integer {
-      return 2
-    }
-    `,
-  },
-  {
-    label: "Wrong scope - error",
-    value: `
-    function dois(): integer {
-      var x: integer;
-      x=2;
-      return x;
-    }
-
-    function f(): integer {
-      var t: integer;
-      var t: integer;
-    }
-    `,
-  },
-  {
-    label: "Wrong scope - warning",
-    value: `
-    function dois(): integer {
-      var x: integer;
-      x=2;
-      return x;
-    }
-
-    function f(): integer {
-      var t: integer;
-      x=2;
-    }
-    `,
-  },
-  {
-    label: "Wrong type",
-    value: `
-    function dois(): integer {
-      return 2;
-    }
-
-    function loka(): integer {
-      var letra: char;
-      letra = dois();
+    function algebra () : integer {
+      return (1 + 2) * ( 3 / 4 );
     }
     `,
   },

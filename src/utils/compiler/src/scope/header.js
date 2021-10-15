@@ -14,8 +14,8 @@ export const ErrorCode = {
   ERR_TOO_MANY_ARGS: 12,
   ERR_PARAM_TYPE: 13,
   ERR_TOO_FEW_ARGS: 14,
-  ERR_RETURN_TYPE_MISMATCH: 15
-}
+  ERR_RETURN_TYPE_MISMATCH: 15,
+};
 
 /*List of Available Types*/
 export const Kind = {
@@ -27,9 +27,9 @@ export const Kind = {
   ARRAY_TYPE_: 4,
   STRUCT_TYPE_: 5,
   ALIAS_TYPE_: 6,
-  SCALAR_TYPE_ : 7,
+  SCALAR_TYPE_: 7,
   UNIVERSAL_: 8,
-}
+};
 
 export class Obj {
   nName = null;
@@ -88,7 +88,7 @@ export class Attr {
   ID = {
     obj: null,
     name: null,
-  }
+  };
 
   T = {
     type: null,
@@ -147,7 +147,7 @@ export class Attr {
   LP = {
     list: null,
   };
-  
+
   TRU = {
     type: null,
     val: null,

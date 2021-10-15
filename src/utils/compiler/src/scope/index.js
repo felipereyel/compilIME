@@ -185,6 +185,7 @@ export default class Scope {
           return this.checkTypes(t1.Array.pElemType, t2.Array.pElemType);
         }
       } else if (t1.eKind == Kind.STRUCT_TYPE_) {
+        // fix me
         const f1 = t1.Struct.pFields;
         const f2 = t2.Struct.pFields;
         while (f1 != null && f2 != null) {
