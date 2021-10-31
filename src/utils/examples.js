@@ -31,15 +31,6 @@ export const options = [
 `,
   },
   {
-    label: "Soma",
-    value: `function soma (a: integer, b: integer) : integer {
-      var sum: integer;
-      sum = a + b;
-      return sum;
-}
-`,
-  },
-  {
     label: "Auxiliar",
     value: `function aux (a: integer) : integer {
       var au, auxx: integer;
